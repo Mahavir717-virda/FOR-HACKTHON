@@ -413,4 +413,304 @@ const UserAvatar = styled.div`
 `;
 
 const LogoutButton = styled.button`
-  background: rgba(239, 68, 68,
+  background: rgba(239, 68, 68, 0.9);
+  border: none;
+  border-radius: 8px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: rgba(239, 68, 68, 1);
+    transform: scale(1.05);
+  }
+`;
+
+const MainContent = styled.main`
+  padding: 2rem 3rem;
+  position: relative;
+  z-index: 2;
+`;
+
+const HeroSection = styled.section`
+  text-align: center;
+  padding: 4rem 0;
+  opacity: ${props => props.$isVisible ? 1 : 0};
+  transform: ${props => props.$isVisible ? 'translateY(0)' : 'translateY(30px)'};
+  transition: all 0.8s ease;
+`;
+
+const HeroContent = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+`;
+
+const HeroBadge = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 25px;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.9rem;
+  color: #3b82f6;
+  margin-bottom: 2rem;
+  animation: ${fadeInUp} 0.8s ease 0.2s both;
+`;
+
+const HeroTitle = styled.h1`
+  font-size: 4rem;
+  font-weight: 900;
+  margin-bottom: 1.5rem;
+  line-height: 1.1;
+  animation: ${fadeInUp} 0.8s ease 0.4s both;
+  
+  @media (max-width: 768px) {
+    font-size: 2.5rem;
+  }
+`;
+
+const GradientText = styled.span`
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+`;
+
+const HeroSubtitle = styled.p`
+  font-size: 1.25rem;
+  color: #cbd5e1;
+  margin-bottom: 3rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+  animation: ${fadeInUp} 0.8s ease 0.6s both;
+`;
+
+const StatsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  animation: ${fadeInUp} 0.8s ease 0.8s both;
+`;
+
+const StatCard = styled.div`
+  text-align: center;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  transition: transform 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+  }
+`;
+
+const StatNumber = styled.div`
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: #3b82f6;
+  margin-bottom: 0.5rem;
+`;
+
+const StatLabel = styled.div`
+  font-size: 0.9rem;
+  color: #cbd5e1;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+`;
+
+const ActionButtons = styled.div`
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  animation: ${fadeInUp} 0.8s ease 1s both;
+`;
+
+const PrimaryButton = styled.button`
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 35px rgba(59, 130, 246, 0.4);
+  }
+`;
+
+const SecondaryButton = styled.button`
+  background: linear-gradient(135deg, #8b5cf6, #ec4899);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 25px rgba(236, 72, 153, 0.3);
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 35px rgba(236, 72, 153, 0.4);
+  }
+`;
+
+const FeaturesSection = styled.section`
+  padding: 6rem 0;
+  opacity: ${props => props.$isVisible ? 1 : 0};
+  transform: ${props => props.$isVisible ? 'translateY(0)' : 'translateY(30px)'};
+  transition: all 0.8s ease 0.2s;
+`;
+
+const SectionHeader = styled.div`
+  text-align: center;
+  margin-bottom: 4rem;
+`;
+
+const SectionTitle = styled.h2`
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  
+  @media (max-width: 768px) {
+    font-size: 2rem;
+  }
+`;
+
+const SectionSubtitle = styled.p`
+  font-size: 1.1rem;
+  color: #cbd5e1;
+  max-width: 600px;
+  margin: 0 auto;
+`;
+
+const FeaturesGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+`;
+
+const FeatureCard = styled.div`
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 2.5rem;
+  text-align: center;
+  backdrop-filter: blur(20px);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-10px);
+    border-color: rgba(59, 130, 246, 0.3);
+    box-shadow: 0 20px 40px rgba(59, 130, 246, 0.1);
+  }
+`;
+
+const FeatureIcon = styled.div`
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  margin: 0 auto 1.5rem;
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+`;
+
+const FeatureTitle = styled.h3`
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #fff;
+`;
+
+const FeatureDescription = styled.p`
+  color: #cbd5e1;
+  line-height: 1.6;
+`;
+
+const QuickActionsSection = styled.section`
+  padding: 6rem 0;
+  opacity: ${props => props.$isVisible ? 1 : 0};
+  transform: ${props => props.$isVisible ? 'translateY(0)' : 'translateY(30px)'};
+  transition: all 0.8s ease 0.4s;
+`;
+
+const ActionsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+`;
+
+const ActionCard = styled.div`
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  backdrop-filter: blur(20px);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+    border-color: rgba(59, 130, 246, 0.3);
+    box-shadow: 0 15px 30px rgba(59, 130, 246, 0.1);
+  }
+`;
+
+const ActionIcon = styled.div`
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #8b5cf6, #ec4899);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin: 0 auto 1rem;
+  box-shadow: 0 8px 25px rgba(236, 72, 153, 0.3);
+`;
+
+const ActionTitle = styled.h3`
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #fff;
+`;
+
+const ActionDescription = styled.p`
+  color: #cbd5e1;
+  font-size: 0.9rem;
+  line-height: 1.5;
+`;
+  
