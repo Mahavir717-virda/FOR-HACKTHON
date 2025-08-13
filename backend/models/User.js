@@ -47,6 +47,11 @@ const UserSchema = new mongoose.Schema({
         unique: true,
         sparse: true, // Allow multiple null values
     },
+    avatar: {
+        type: String,
+        required: false,
+        default: '',
+    },
 }, {
     timestamps: true // Adds createdAt and updatedAt
 });

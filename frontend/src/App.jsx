@@ -10,6 +10,7 @@ import SignIn from './components/SignIn';
 import Dashboard from './components/Dashboard';
 import Profile from './components/Profile.jsx';
 import OAuthCallback from './components/OAuthCallback.jsx';
+import ActivityPage from './components/ActivityPage.jsx';
 
 // Your PrivateRoute component remains the same
 const PrivateRoute = ({ children }) => {
@@ -25,7 +26,7 @@ function App() {
   return (
     <Router>
       <ToastContainer
-        position="bottom-right"
+        position="top-right"
         autoClose={5000}
         hideProgressBar={false}
         newestOnTop={false}
@@ -50,6 +51,10 @@ function App() {
         <Route 
             path="/profile" 
             element={<PrivateRoute><Profile /></PrivateRoute>}
+        />
+        <Route 
+            path="/activity" 
+            element={<PrivateRoute><ActivityPage /></PrivateRoute>}
         />
         
         {/* A catch-all route to redirect unknown paths back to the home page */}

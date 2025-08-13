@@ -127,13 +127,7 @@ const SignIn = () => {
         }
 
         localStorage.setItem('token', data.token); // Store the token
-        if (data.user && data.user.username) {
-          toast.success(`Sign-in successful! Welcome ${data.user.username}`);
-        } else if (data.user && data.user.email) {
-          toast.success(`Sign-in successful! Welcome ${data.user.email}`);
-        } else {
-          toast.success('Sign-in successful!');
-        }
+        localStorage.setItem('justLoggedIn', 'true'); // Flag for Dashboard toast
         navigate('/dashboard');
       }
     } catch (error) {

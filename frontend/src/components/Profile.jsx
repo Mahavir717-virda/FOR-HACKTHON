@@ -169,7 +169,8 @@ const Profile = () => {
     const token = localStorage.getItem('token');
 
     try {
-      const response = await fetch('http://localhost:5000/api/profile/me', {
+      // First, update the profile data
+      const profileUpdateResponse = await fetch('http://localhost:5000/api/profile/me', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -178,16 +179,39 @@ const Profile = () => {
         body: JSON.stringify(form)
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to update profile');
+      if (!profileUpdateResponse.ok) {
+        throw new Error('Failed to update profile data.');
       }
 
-      const updatedUser = await response.json();
+      let updatedUser = await profileUpdateResponse.json();
+
+      // If there's a new avatar file, upload it
+      if (avatarFile) {
+        const formData = new FormData();
+        formData.append('avatar', avatarFile);
+
+        const avatarUpdateResponse = await fetch('http://localhost:5000/api/profile/avatar', {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          body: formData
+        });
+
+        if (!avatarUpdateResponse.ok) {
+          throw new Error('Failed to upload avatar.');
+        }
+        const avatarData = await avatarUpdateResponse.json();
+        // Combine the results
+        updatedUser.avatar = avatarData.avatar;
+      }
+      
       setUser(updatedUser);
       setEditMode(false);
       setShowSuccessToast(true); // Show success notification
+
     } catch (err) {
-      setError('Failed to update profile.');
+      setError(err.message || 'Failed to update profile.');
     } finally {
       setIsSaving(false);
     }
@@ -218,7 +242,7 @@ const Profile = () => {
       
       <ProfileCard>
         <AvatarContainer>
-            <Avatar src={user?.avatar || 'https://placehold.co/150x150/E0F7FA/01579B?text=User'} alt="Avatar" />
+            <Avatar src={user?.avatar ? `http://localhost:5000${user.avatar}` : 'https://placehold.co/150x150/E0F7FA/01579B?text=User'} alt="Avatar" />
             <AvatarOverlay onClick={() => setEditMode(true)}>
                 <FaCamera />
             </AvatarOverlay>
@@ -236,7 +260,14 @@ const Profile = () => {
         
         <ButtonGroup>
           <EditButton onClick={handleEdit}><FaEdit /> Edit Profile</EditButton>
-          <LogoutButton onClick={() => { localStorage.removeItem('user'); navigate('/'); }}>
+          <LogoutButton onClick={() => { 
+            const user = JSON.parse(localStorage.getItem('user'));
+            const username = user?.username || user?.firstName || 'User';
+            localStorage.removeItem('token'); 
+            localStorage.removeItem('user');
+            localStorage.setItem('logoutMessage', `Goodbye, ${username}! You have been logged out successfully.`);
+            navigate('/'); 
+          }}>
              Logout
           </LogoutButton>
         </ButtonGroup>

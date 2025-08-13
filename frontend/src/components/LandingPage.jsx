@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
+import { toast } from 'react-toastify';
 import { FaRocket, FaCode, FaUsers, FaTrophy, FaLightbulb, FaUserCircle, FaInfoCircle, FaCalendarAlt } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
@@ -58,13 +59,12 @@ const float = keyframes`
 const LandingPage = () => {
   const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
-  const [logoutMessage, setLogoutMessage] = useState('');
 
   useEffect(() => {
-    // Check for logout message
+    // Check for logout message and show toast
     const message = localStorage.getItem('logoutMessage');
     if (message) {
-      setLogoutMessage(message);
+      toast.success(message);
       localStorage.removeItem('logoutMessage');
     }
     
@@ -87,13 +87,6 @@ const LandingPage = () => {
 
   return (
     <Container>
-      {/* Logout Message */}
-      {logoutMessage && (
-        <LogoutMessage>
-          {logoutMessage}
-        </LogoutMessage>
-      )}
-      
       {/* Floating Particles */}
       <ParticleContainer>
         {[...Array(20)].map((_, i) => (
@@ -114,7 +107,7 @@ const LandingPage = () => {
           <SignInButton onClick={() => handleNavigation('/signin')}>
             Sign In
           </SignInButton>
-          <SignUpButton onClick={() => handleNavigation('/signup')}>
+          <SignUpButton onClick={() => handleNavigation('/signin?mode=signup')}>
             Sign Up
           </SignUpButton>
         </AuthButtons>
@@ -293,21 +286,6 @@ const Container = styled.div`
   color: #fff;
   position: relative;
   overflow-x: hidden;
-`;
-
-const LogoutMessage = styled.div`
-  position: fixed;
-  top: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  background: linear-gradient(135deg, #10b981, #059669);
-  color: white;
-  padding: 1rem 2rem;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
-  z-index: 1000;
-  font-weight: 600;
-  animation: ${fadeInUp} 0.5s ease-out;
 `;
 
 const ParticleContainer = styled.div`

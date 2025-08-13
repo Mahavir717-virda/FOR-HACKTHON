@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
+const Activity = require('../models/Activity');
 const jwt = require('jsonwebtoken'); // <-- 1. IMPORT THE JWT LIBRARY
 
 // Signup
@@ -56,7 +57,17 @@ router.post('/signup', async (req, res) => {
             (err, token) => {
                 if (err) throw err;
                 // <-- 4. Send the token back to the client
-                res.json({ message: 'Signup successful', token });
+                res.json({ 
+                    message: 'Signup successful', 
+                    token,
+                    user: {
+                        id: user.id,
+                        email: user.email,
+                        firstName: user.firstName,
+                        lastName: user.lastName,
+                        username: user.username
+                    }
+                });
             }
         );
         // --- END OF JWT GENERATION ---
@@ -86,6 +97,14 @@ router.post('/signin', async (req, res) => {
         if (!isMatch) {
             return res.status(400).json({ message: 'Invalid email or password' });
         }
+
+        // Log login activity
+        const loginActivity = new Activity({
+            user: user._id,
+            activityType: 'login',
+            description: 'User logged in.',
+        });
+        await loginActivity.save();
 
         // --- ADDED JWT GENERATION ON SIGNIN ---
         // <-- 2. Create the payload for the token
@@ -167,4 +186,4 @@ router.post('/google', async (req, res) => {
     }
 });
 
-module.exports = router;  
+module.exports = router;
