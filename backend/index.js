@@ -19,6 +19,9 @@ app.use(express.json());
 // Serve static files from the 'uploads' directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// this line to enable your OTP routes
+app.use('/api/otp', require('./routes/otp'));
+
 // 2. Add this console log for debugging.
 // This will immediately tell us if the variable was loaded from your .env file.
 console.log('Attempting to connect with MONGO_URI:', process.env.MONGO_URI);
@@ -47,6 +50,7 @@ mongoose.connection.on('disconnected', () => {
 // Mount the auth routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/profile', require('./routes/profile'));
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import { toast } from 'react-toastify';
 import { FaSyncAlt, FaFacebookF, FaTwitter, FaLinkedinIn, FaGithub } from 'react-icons/fa';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { account } from '../utils/appwrite'; // Import from our utility file
 import { Client, Account } from "appwrite"; 
 
@@ -140,10 +140,11 @@ const SignIn = () => {
     const handleGoogleSignIn = () => {
     setIsGoogleLoading(true);
     setErrorMessage('');
+    // Correctly point to frontend routes for success and failure
     account.createOAuth2Session(
       'google',
-      'http://localhost:5000/oauth-callback',
-      'http://localhost:5000/login'
+      `${window.location.origin}/dashboard`, // On success, go to the dashboard
+      `${window.location.origin}/signin`     // On failure, return to the sign-in page
     );
   };
 
@@ -236,7 +237,7 @@ const SignIn = () => {
                   <label htmlFor="rememberCheckbox">Remember me</label>
                 </RememberMe>
                 <ForgotPassword>
-                  <a href="#">Forgot password?</a>
+                  <Link to="/forgot-password">Forgot password?</Link>
                 </ForgotPassword>
               </RememberForgot>
             )}

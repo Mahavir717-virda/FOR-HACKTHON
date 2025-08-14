@@ -11,6 +11,7 @@ import Dashboard from './components/Dashboard';
 import Profile from './components/Profile.jsx';
 import OAuthCallback from './components/OAuthCallback.jsx';
 import ActivityPage from './components/ActivityPage.jsx';
+import ForgotPassword from './components/ForgotPassword.jsx';
 
 // Your PrivateRoute component remains the same
 const PrivateRoute = ({ children }) => {
@@ -43,6 +44,7 @@ function App() {
         {/* Your other routes remain the same */}
         <Route path="/signup" element={<SignUp />} />
         <Route path="/signin" element={<SignIn />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/oauth-callback" element={<OAuthCallback />} />
         <Route 
             path="/dashboard" 
