@@ -1,5 +1,6 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { Route, Routes, Navigate } from 'react-router-dom';
+import ChatPage from "./components/ChatPage";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -25,7 +26,7 @@ const PrivateRoute = ({ children }) => {
 
 function App() {
   return (
-    <Router>
+    <>
       <ToastContainer
         position="top-right"
         autoClose={5000}
@@ -40,29 +41,30 @@ function App() {
       <Routes>
         {/* The LandingPage component is now used for the root path */}
         <Route path="/" element={<LandingPage />} />
-        
+
         {/* Your other routes remain the same */}
         <Route path="/signup" element={<SignUp />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
-        <Route 
-            path="/dashboard" 
-            element={<PrivateRoute><Dashboard /></PrivateRoute>}
+        <Route path="/chat" element={<PrivateRoute><ChatPage /></PrivateRoute>} />
+        <Route
+          path="/dashboard"
+          element={<PrivateRoute><Dashboard /></PrivateRoute>}
         />
-        <Route 
-            path="/profile" 
-            element={<PrivateRoute><Profile /></PrivateRoute>}
+        <Route
+          path="/profile"
+          element={<PrivateRoute><Profile /></PrivateRoute>}
         />
-        <Route 
-            path="/activity" 
-            element={<PrivateRoute><ActivityPage /></PrivateRoute>}
+        <Route
+          path="/activity"
+          element={<PrivateRoute><ActivityPage /></PrivateRoute>}
         />
-        
+
         {/* A catch-all route to redirect unknown paths back to the home page */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
-    </Router>
+    </>
   );
 }
 

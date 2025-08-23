@@ -1,15 +1,18 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
 import { GoogleOAuthProvider } from '@react-oauth/google';
-import './index.css'
-import App from './App.jsx'
-import SignUp from './components/SignUp.jsx';
-import SignIn from './components/SignIn.jsx';
+import './index.css';
+import App from './App.jsx';
 
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
+const root = ReactDOM.createRoot(document.getElementById('root'));
+
+root.render(
+  <React.StrictMode>
     <GoogleOAuthProvider clientId="127468730932-b5hlr1lkr6cfb5st2hdlerciks50hbc6.apps.googleusercontent.com">
-      <App />
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
     </GoogleOAuthProvider>
-  </StrictMode>,
-)
+  </React.StrictMode>
+);

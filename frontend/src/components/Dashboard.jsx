@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { FaUserCircle, FaSignOutAlt, FaBell, FaSun, FaMoon } from 'react-icons/fa';
+import { FaUserCircle, FaSignOutAlt, FaBell, FaSun, FaMoon, FaRobot } from 'react-icons/fa';
 import { useTheme } from '../utils/useTheme';
-import styled from 'styled-components';
+
+
 
 const TechTonicHackathon = () => {
+
+
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
     const [timeLeft, setTimeLeft] = useState({
@@ -20,10 +23,11 @@ const TechTonicHackathon = () => {
     const location = useLocation();
     const { theme, toggleTheme, isDark, isLight } = useTheme();
 
+
     // Enhanced theme toggle with notification
     const handleThemeToggle = () => {
         const newTheme = toggleTheme();
-        
+
         // Show theme change notification
         toast.success(`Switched to ${newTheme} mode!`, {
             position: "top-right",
@@ -44,7 +48,7 @@ const TechTonicHackathon = () => {
         };
 
         window.addEventListener('scroll', handleScroll);
-        
+
         // Cleanup listener on component unmount
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
@@ -102,7 +106,7 @@ const TechTonicHackathon = () => {
 
         return () => elements.forEach(el => observer.unobserve(el));
     }, []);
-    
+
     // Effect for section reveal animations
     useEffect(() => {
         const revealSections = document.querySelectorAll('.section');
@@ -151,7 +155,7 @@ const TechTonicHackathon = () => {
 
                 const userData = await response.json();
                 setUser(userData);
-                
+
                 // Check for a new login and show toast
                 const justLoggedIn = localStorage.getItem('justLoggedIn');
                 if (justLoggedIn) {
@@ -229,6 +233,10 @@ const TechTonicHackathon = () => {
         }
         setIsMenuOpen(false);
     };
+
+
+
+
 
     // CSS is embedded here to ensure styles are perfectly preserved.
     const styles = `
@@ -1678,7 +1686,7 @@ const TechTonicHackathon = () => {
     return (
         <>
             <style>{styles}</style>
-            
+
             <div className="floating-particles">
                 <div className="particle"></div>
                 <div className="particle"></div>
@@ -1695,7 +1703,7 @@ const TechTonicHackathon = () => {
                 <div className="nav-container">
                     <a href="#home" className="nav-logo" onClick={closeMenu}>
                         {/* LOGO.png removed: Add your logo image here if available */}
-                        <span style={{fontWeight:800, fontSize:'1.5rem'}}>Tech Tonic</span>
+                        <span style={{ fontWeight: 800, fontSize: '1.5rem' }}>Tech Tonic</span>
                     </a>
                     <ul className={isMenuOpen ? 'nav-menu active' : 'nav-menu'} id="nav-menu">
                         <li><a href="#home" className="nav-link" onClick={closeMenu}>Home</a></li>
@@ -1714,7 +1722,7 @@ const TechTonicHackathon = () => {
                 </div>
             </nav>
             <br />
-            
+
             <section id="home" className="hero">
                 <div className="hero-grid"></div>
                 <div className="hero-content">
@@ -1728,7 +1736,7 @@ const TechTonicHackathon = () => {
                     <p className="hero-subtitle">
                         Transforming ideas, Building future
                     </p>
-                    
+
                     <div className="hero-stats">
                         <div className="stat-item">
                             <span className="stat-number">8</span>
@@ -1779,7 +1787,7 @@ const TechTonicHackathon = () => {
             </section>
 
             {/* Profile and Logout Buttons at top right */}
-            <div style={{position:'fixed', top:'24px', right:'32px', zIndex:2000, display:'flex', gap:'16px', alignItems: 'center'}}>
+            <div style={{ position: 'fixed', top: '24px', right: '32px', zIndex: 2000, display: 'flex', gap: '16px', alignItems: 'center' }}>
                 <button
                     onClick={handleThemeToggle}
                     className="theme-toggle"
@@ -1788,44 +1796,51 @@ const TechTonicHackathon = () => {
                     {isLight ? <FaMoon /> : <FaSun />}
                 </button>
                 <button
-                    style={{background:'rgba(255,255,255,0.1)', border:'none', borderRadius:'50%', padding:'12px', cursor:'pointer', boxShadow:'0 2px 8px rgba(0,0,0,0.08)'}}
+                    style={{ background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: '50%', padding: '12px', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}
                     onClick={() => navigate('/activity')}
                     title="Activity"
                 >
-                    <FaBell style={{fontSize:'2rem', color:'#a78bfa'}} />
+                    <FaBell style={{ fontSize: '2rem', color: '#a78bfa' }} />
                 </button>
                 <button
-                    style={{background:'rgba(255,255,255,0.1)', border:'none', borderRadius:'50%', padding:'12px', cursor:'pointer', boxShadow:'0 2px 8px rgba(0,0,0,0.08)'}}
+                    style={{ background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: '50%', padding: '12px', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}
+                    onClick={() => navigate('/chat')}
+                    title="AI Chat"
+                >
+                    <FaRobot style={{ fontSize: '2rem', color: '#a78bfa' }} />
+                </button>
+                <button
+                    style={{ background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: '50%', padding: '12px', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}
                     onClick={() => navigate('/profile')}
                     title="Profile"
                 >
-                    <FaUserCircle style={{fontSize:'2rem', color:'#a78bfa'}} />
+                    <FaUserCircle style={{ fontSize: '2rem', color: '#a78bfa' }} />
                 </button>
             </div>
 
             {/* Profile Modal */}
             {showProfileModal && user && (
-                <div style={{position:'fixed', top:0, left:0, width:'100vw', height:'100vh', background:'rgba(30,19,58,0.7)', zIndex:3000, display:'flex', alignItems:'center', justifyContent:'center'}}>
-                    <div style={{background:'#2c2250', borderRadius:'24px', padding:'2.5rem 2rem', minWidth:'340px', boxShadow:'0 8px 32px rgba(0,0,0,0.18)', color:'#fff', textAlign:'center', position:'relative'}}>
-                        <button onClick={() => setShowProfileModal(false)} style={{position:'absolute', top:'18px', right:'18px', background:'none', border:'none', color:'#fff', fontSize:'1.5rem', cursor:'pointer'}}>&times;</button>
-                        <div style={{display:'flex', flexDirection:'column', alignItems:'center', gap:'12px'}}>
-                            <div style={{width:'80px', height:'80px', borderRadius:'50%', background:'#a78bfa', color:'#fff', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'2rem', fontWeight:'600', marginBottom:'8px'}}>
+                <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(30,19,58,0.7)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ background: '#2c2250', borderRadius: '24px', padding: '2.5rem 2rem', minWidth: '340px', boxShadow: '0 8px 32px rgba(0,0,0,0.18)', color: '#fff', textAlign: 'center', position: 'relative' }}>
+                        <button onClick={() => setShowProfileModal(false)} style={{ position: 'absolute', top: '18px', right: '18px', background: 'none', border: 'none', color: '#fff', fontSize: '1.5rem', cursor: 'pointer' }}>&times;</button>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+                            <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: '#a78bfa', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', fontWeight: '600', marginBottom: '8px' }}>
                                 {user.profilePicture ? (
-                                    <img src={user.profilePicture} alt="Profile" style={{width:'100%', height:'100%', borderRadius:'50%'}} />
+                                    <img src={user.profilePicture} alt="Profile" style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
                                 ) : (
                                     `${user.firstName?.charAt(0) || ''}${user.lastName?.charAt(0) || ''}`.toUpperCase()
                                 )}
                             </div>
-                            <div style={{fontSize:'1.2rem', fontWeight:'700'}}>{user.firstName} {user.lastName}</div>
-                            <div style={{fontSize:'0.95rem', opacity:0.8}}>{user.email}</div>
+                            <div style={{ fontSize: '1.2rem', fontWeight: '700' }}>{user.firstName} {user.lastName}</div>
+                            <div style={{ fontSize: '0.95rem', opacity: 0.8 }}>{user.email}</div>
                         </div>
-                        <div style={{margin:'2rem 0 1rem 0', textAlign:'left'}}>
-                            <div style={{marginBottom:'0.7rem'}}><span style={{fontWeight:'600'}}>Username:</span> {user.username || '-'}</div>
-                            <div style={{marginBottom:'0.7rem'}}><span style={{fontWeight:'600'}}>Full Name:</span> {user.firstName} {user.lastName}</div>
-                            <div><span style={{fontWeight:'600'}}>Email:</span> {user.email}</div>
+                        <div style={{ margin: '2rem 0 1rem 0', textAlign: 'left' }}>
+                            <div style={{ marginBottom: '0.7rem' }}><span style={{ fontWeight: '600' }}>Username:</span> {user.username || '-'}</div>
+                            <div style={{ marginBottom: '0.7rem' }}><span style={{ fontWeight: '600' }}>Full Name:</span> {user.firstName} {user.lastName}</div>
+                            <div><span style={{ fontWeight: '600' }}>Email:</span> {user.email}</div>
                         </div>
                         <button
-                            style={{background:'#a78bfa', color:'#fff', border:'none', borderRadius:'50px', padding:'12px 32px', fontSize:'1rem', fontWeight:'600', cursor:'pointer', marginTop:'1rem'}}
+                            style={{ background: '#a78bfa', color: '#fff', border: 'none', borderRadius: '50px', padding: '12px 32px', fontSize: '1rem', fontWeight: '600', cursor: 'pointer', marginTop: '1rem' }}
                             onClick={() => { setShowProfileModal(false); navigate('/profile'); }}
                         >
                             Edit Profile
@@ -1841,7 +1856,7 @@ const TechTonicHackathon = () => {
                         <h2 className="section-title fade-in-up">Why <span className="gradient-text">Tech-Tonic Hackathon?</span></h2>
                         <p className="section-subtitle fade-in-up">Experience the most comprehensive hackathon designed for developers who want to push boundaries and create meaningful impact.</p>
                     </div>
-                    
+
                     <div className="features-grid">
                         <div className="feature-card fade-in-up">
                             <div className="feature-icon">💻</div>
@@ -1883,10 +1898,10 @@ const TechTonicHackathon = () => {
                         <h2 className="section-title fade-in-up">Event <span className="gradient-text">Timeline</span></h2>
                         <p className="section-subtitle fade-in-up">Your complete journey from registration to victory on 30th August.</p>
                     </div>
-                    
+
                     <div className="timeline-container">
                         <div className="timeline-line"></div>
-                        
+
                         <div className="timeline-item fade-in-up">
                             <div className="timeline-dot"></div>
                             <div className="timeline-content">
@@ -1895,7 +1910,7 @@ const TechTonicHackathon = () => {
                                 <p>Participants check in, receive event materials, and enjoy a light breakfast while networking.</p>
                             </div>
                         </div>
-                        
+
                         <div className="timeline-item fade-in-up">
                             <div className="timeline-dot"></div>
                             <div className="timeline-content">
@@ -1904,7 +1919,7 @@ const TechTonicHackathon = () => {
                                 <p>Opening remarks by the event organizers.</p>
                             </div>
                         </div>
-                        
+
                         <div className="timeline-item fade-in-up">
                             <div className="timeline-dot"></div>
                             <div className="timeline-content">
@@ -1913,7 +1928,7 @@ const TechTonicHackathon = () => {
                                 <p>Judges evaluate initial ideas and provide teams with valuable feedback to enhance their solutions.</p>
                             </div>
                         </div>
-                        
+
                         <div className="timeline-item fade-in-up">
                             <div className="timeline-dot"></div>
                             <div className="timeline-content">
@@ -1922,7 +1937,7 @@ const TechTonicHackathon = () => {
                                 <p>Teams begin working on their projects.</p>
                             </div>
                         </div>
-                        
+
                         <div className="timeline-item fade-in-up">
                             <div className="timeline-dot"></div>
                             <div className="timeline-content">
@@ -1931,7 +1946,7 @@ const TechTonicHackathon = () => {
                                 <p>Teams present their progress to mentors or judges.</p>
                             </div>
                         </div>
-                        
+
                         <div className="timeline-item fade-in-up">
                             <div className="timeline-dot"></div>
                             <div className="timeline-content">
@@ -1951,41 +1966,67 @@ const TechTonicHackathon = () => {
                         </div>
                     </div>
                 </div>
+
+            </section>
+            <section id="rules" className="section">
+                <div className="container">
+                    <div className="section-header">
+                        <h2 className="section-title fade-in-up">
+                            Rules & <span className="gradient-text">Regulations</span>
+                        </h2>
+                        <p className="section-subtitle fade-in-up">
+                            Ensure a fair and enjoyable experience for all participants by adhering to these guidelines.
+                        </p>
+                    </div>
+
+                    <div className="rules-list">
+                        <div className="rule-item fade-in-up">
+                            <h3>Eligibility</h3>
+                            <p>Open to all students and professionals aged 18 and above. Participants can register individually or in teams of up to 4 members.</p>
+                        </div>
+
+                        <div className="rule-item fade-in-up">
+                            <h3>Registration</h3>
+                            <p>All participants must complete the registration form and agree to the event terms and conditions.</p>
+                        </div>
+
+                        <div className="rule-item fade-in-up">
+                            <h3>Code of Conduct</h3>
+                            <p>Respectful behavior is expected at all times. Harassment, discrimination, or any form of misconduct will not be tolerated.</p>
+                        </div>
+
+                        <div className="rule-item fade-in-up">
+                            <h3>Project Requirements</h3>
+                            <p>Projects must be developed during the hackathon period. Pre-existing projects or code are not allowed.</p>
+                        </div>
+
+                        <div className="rule-item fade-in-up">
+                            <h3>Intellectual Property</h3>
+                            <p>Participants retain ownership of their projects but grant the organizers the right to showcase them for promotional purposes.</p>
+                        </div>
+
+                        <div className="rule-item fade-in-up">
+                            <h3>Judging Criteria</h3>
+                            <p>Projects will be evaluated based on innovation, technical complexity, usability, and impact.</p>
+                        </div>
+
+                        <div className="rule-item fade-in-up">
+                            <h3>Prizes</h3>
+                            <p>Winners will be announced at the closing ceremony. Prizes are non-transferable and cannot be exchanged for cash.</p>
+                        </div>
+
+                        <div className="rule-item fade-in-up" style={{ background: 'var(--gradient-primary)' }}>
+                            <h3>Contact Information</h3>
+                            <p>
+                                If you have any questions or need assistance, please contact us at{" "}
+                                <a href="mailto:support@techttonic.com">support@techttonic.com</a>.
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </section>
         </>
     );
-}
+};
+
 export default TechTonicHackathon;
-
-const DashboardContainer = styled.div`
-  padding: 40px;
-  background-color: #f4f7f6;
-  min-height: 100vh;
-`;
-
-const Header = styled.div`
-  margin-bottom: 40px;
-  h1 {
-    font-size: 2.5rem;
-    color: #333;
-  }
-  p {
-    color: #777;
-  }
-`;
-
-const Content = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-`;
-
-const Card = styled.div`
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  h2 {
-    margin-bottom: 15px;
-  }
-`;

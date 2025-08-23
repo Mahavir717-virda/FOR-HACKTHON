@@ -1,5 +1,6 @@
 // 1. Load environment variables at the very top. This is crucial.
 const dotenvResult = require('dotenv').config();
+const aiRoutes = require('./routes/ai.js');
 
 if (dotenvResult.error) {
   console.error('Error loading .env file:', dotenvResult.error);
@@ -16,12 +17,15 @@ const app = express();
 
 // Allow requests from your frontend development server
 const corsOptions = {
-  origin: 'http://localhost:5173', // or your frontend's port
+  origin: 'http://localhost:5174', // or your frontend's port
   optionsSuccessStatus: 200
 };
 
 app.use(cors(corsOptions));
 app.use(express.json());
+
+// after app.use(express.json())...
+app.use("/api/ai", aiRoutes);
 
 // Serve static files from the 'uploads' directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
