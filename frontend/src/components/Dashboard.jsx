@@ -1,3 +1,4 @@
+import ProfileButton from './ProfileButton';
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -6,7 +7,7 @@ import { useTheme } from '../utils/useTheme';
 
 
 
-const TechTonicHackathon = () => {
+const TechTonicHackathon = ({ user, onLogout }) => {
 
 
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -17,10 +18,9 @@ const TechTonicHackathon = () => {
         minutes: '00',
         seconds: '00',
     });
-    const [user, setUser] = useState(null);
     const [showProfileModal, setShowProfileModal] = useState(false);
-    const navigate = useNavigate();
-    const location = useLocation();
+    
+
     const { theme, toggleTheme, isDark, isLight } = useTheme();
 
 
@@ -38,180 +38,6 @@ const TechTonicHackathon = () => {
             draggable: true,
         });
     };
-
-    // --- SIDE EFFECTS (Lifecycle Management) ---
-
-    // Effect for Navbar scroll and mobile menu body overflow
-    useEffect(() => {
-        const handleScroll = () => {
-            setIsScrolled(window.scrollY > 50);
-        };
-
-        window.addEventListener('scroll', handleScroll);
-
-        // Cleanup listener on component unmount
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
-
-    useEffect(() => {
-        // Prevent body scrolling when mobile menu is open
-        document.body.style.overflow = isMenuOpen ? 'hidden' : '';
-    }, [isMenuOpen]);
-
-
-    // Effect for Countdown Timer
-    useEffect(() => {
-        const timer = setInterval(() => {
-            const targetDate = new Date('2025-08-30T09:00:00').getTime();
-            const now = new Date().getTime();
-            const difference = targetDate - now;
-
-            if (difference > 0) {
-                const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-                setTimeLeft({
-                    days: days.toString().padStart(2, '0'),
-                    hours: hours.toString().padStart(2, '0'),
-                    minutes: minutes.toString().padStart(2, '0'),
-                    seconds: seconds.toString().padStart(2, '0'),
-                });
-            } else {
-                setTimeLeft({ days: '00', hours: '00', minutes: '00', seconds: '00' });
-                clearInterval(timer);
-            }
-        }, 1000);
-
-        return () => clearInterval(timer);
-    }, []);
-
-    // Effect for Fade-in Animations on Scroll
-    useEffect(() => {
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, observerOptions);
-
-        const elements = document.querySelectorAll('.fade-in-up');
-        elements.forEach(el => observer.observe(el));
-
-        return () => elements.forEach(el => observer.unobserve(el));
-    }, []);
-
-    // Effect for section reveal animations
-    useEffect(() => {
-        const revealSections = document.querySelectorAll('.section');
-        const revealObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
-        }, { threshold: 0.1 });
-
-        revealSections.forEach(section => {
-            section.style.opacity = '0';
-            section.style.transform = 'translateY(50px)';
-            section.style.transition = 'all 0.8s ease';
-            revealObserver.observe(section);
-        });
-
-        return () => revealSections.forEach(section => revealObserver.unobserve(section));
-    }, []);
-
-    useEffect(() => {
-        const fetchUserData = async () => {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                navigate('/signin');
-                return;
-            }
-
-            try {
-                const response = await fetch('http://localhost:5000/api/profile/me', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-
-                if (!response.ok) {
-                    // If token is invalid or expired, redirect to signin
-                    if (response.status === 401) {
-                        localStorage.removeItem('token');
-                        navigate('/signin');
-                    }
-                    throw new Error('Failed to fetch user data');
-                }
-
-                const userData = await response.json();
-                setUser(userData);
-
-                // Check for a new login and show toast
-                const justLoggedIn = localStorage.getItem('justLoggedIn');
-                if (justLoggedIn) {
-                    toast.success(`Sign-in successful! Welcome, ${userData.username || userData.firstName || 'User'}!`);
-                    localStorage.removeItem('justLoggedIn');
-                }
-
-            } catch (error) {
-                console.error('Error fetching user data:', error);
-                localStorage.removeItem('token');
-                navigate('/signin');
-            }
-        };
-
-        fetchUserData();
-    }, [navigate]);
-
-    // Effect to handle GitHub login token
-    useEffect(() => {
-        const params = new URLSearchParams(location.search);
-        const token = params.get('token');
-        if (token) {
-            localStorage.setItem('token', token);
-            // Clean the URL
-            navigate('/dashboard', { replace: true });
-        }
-
-        // Handle toast for regular login
-        const justLoggedIn = localStorage.getItem('justLoggedIn');
-        if (justLoggedIn) {
-            toast.success('Signed in successfully!');
-            localStorage.removeItem('justLoggedIn');
-        }
-
-        // Fetch user profile
-        const fetchProfile = async () => {
-            const storedToken = localStorage.getItem('token');
-            if (storedToken) {
-                try {
-                    // You would typically have an API endpoint to get the user profile
-                    // For now, we can decode the token if it contains user info,
-                    // or you can create a /api/profile/me endpoint.
-                    // This is a placeholder, assuming you have a way to get user data.
-                    // const response = await fetch('/api/profile/me', {
-                    //   headers: { 'Authorization': `Bearer ${storedToken}` }
-                    // });
-                    // const data = await response.json();
-                    // setUser(data);
-                } catch (error) {
-                    console.error('Failed to fetch profile', error);
-                }
-            }
-        };
-
-        fetchProfile();
-    }, [location, navigate]);
 
     // --- EVENT HANDLERS ---
 
@@ -1786,7 +1612,6 @@ const TechTonicHackathon = () => {
                 </div>
             </section>
 
-            {/* Profile and Logout Buttons at top right */}
             <div style={{ position: 'fixed', top: '24px', right: '32px', zIndex: 2000, display: 'flex', gap: '16px', alignItems: 'center' }}>
                 <button
                     onClick={handleThemeToggle}
@@ -1809,13 +1634,7 @@ const TechTonicHackathon = () => {
                 >
                     <FaRobot style={{ fontSize: '2rem', color: '#a78bfa' }} />
                 </button>
-                <button
-                    style={{ background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: '50%', padding: '12px', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}
-                    onClick={() => navigate('/profile')}
-                    title="Profile"
-                >
-                    <FaUserCircle style={{ fontSize: '2rem', color: '#a78bfa' }} />
-                </button>
+                <ProfileButton user={user} onLogout={onLogout} />
             </div>
 
             {/* Profile Modal */}

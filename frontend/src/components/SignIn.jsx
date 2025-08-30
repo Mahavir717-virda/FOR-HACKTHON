@@ -166,10 +166,7 @@ const SignIn = () => {
           localStorage.removeItem('rememberMe'); // Clear "Remember Me" data
         }
 
-        localStorage.setItem('token', data.token); // Store the token
-        localStorage.setItem('user', JSON.stringify(data.user)); // Store user data
-        localStorage.setItem('justLoggedIn', 'true'); // Flag for Dashboard toast
-        navigate('/dashboard');
+        navigate('/verify-otp', { state: { email: data.email } });
       }
     } catch (error) {
       setErrorMessage(error.message); // Set error message
@@ -206,17 +203,24 @@ const SignIn = () => {
           throw new Error(data.message || 'Google sign-in failed');
         }
 
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('justLoggedIn', 'true');
-        navigate('/dashboard');
+        navigate('/verify-otp', { state: { email: data.email } });
+
       } catch (error) {
-        setErrorMessage(error.message);
+        if (error.message.includes('network')) {
+          setErrorMessage('Network error. Please check your internet connection.');
+        } else {
+          setErrorMessage(error.message);
+        }
       } finally {
         setIsGoogleLoading(false);
       }
     },
-    onError: () => {
-      setErrorMessage('Google login failed. Please try again.');
+    onError: (error) => {
+      if (error.message.includes('popup_closed_by_user')) {
+        setErrorMessage('Google login was cancelled.');
+      } else {
+        setErrorMessage('Google login failed. Please try again.');
+      }
       setIsGoogleLoading(false);
     },
   });
@@ -362,7 +366,14 @@ const SignIn = () => {
               <span>{isGoogleLoading ? 'Signing in...' : (isSignUp ? 'Sign up with Google' : 'Continue with Google')}</span>
             </GoogleBtn>
 
-            <GithubBtn type="button" onClick={() => window.location.href='http://localhost:5000/api/auth/github'}>
+            <GithubBtn type="button" onClick={() => {
+              const githubClientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
+              const redirectUri = 'http://localhost:5000/api/auth/github/callback';
+              const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${githubClientId}&redirect_uri=${redirectUri}&scope=user:email`;
+              console.log('VITE_GITHUB_CLIENT_ID:', githubClientId);
+              console.log('Redirecting to GitHub Auth URL:', githubAuthUrl);
+              window.location.href = githubAuthUrl;
+            }}>
               <FaGithub />
               <span>Continue with Github</span>
             </GithubBtn>

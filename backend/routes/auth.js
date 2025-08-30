@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 const Activity = require('../models/Activity');
+const Otp = require('../models/Otp');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const axios = require('axios');
@@ -109,6 +110,59 @@ router.post('/signin', async (req, res) => {
             return res.status(400).json({ message: 'Invalid email or password' });
         }
 
+        // --- OTP Generation and Sending ---
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        
+        const newOtp = new Otp({
+            email: user.email,
+            otp: otp
+        });
+        await newOtp.save();
+
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: user.email,
+            subject: 'Your OTP for Sign In',
+            text: `Your OTP is: ${otp}`
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.log(error);
+                return res.status(500).json({ message: 'Error sending OTP email' });
+            }
+            console.log('Email sent: ' + info.response);
+            res.status(200).json({ message: 'OTP sent to your email', email: user.email });
+        });
+        
+    } catch (err) {
+        console.error('Signin error:', err);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+router.post('/verify-otp', async (req, res) => {
+    const { email, otp } = req.body;
+
+    if (!email || !otp) {
+        return res.status(400).json({ message: 'Email and OTP are required' });
+    }
+
+    try {
+        const otpDoc = await Otp.findOne({ email }).sort({ createdAt: -1 });
+
+        if (!otpDoc) {
+            return res.status(400).json({ message: 'Invalid OTP or OTP expired' });
+        }
+
+        const isMatch = await otpDoc.compareOtp(otp);
+
+        if (!isMatch) {
+            return res.status(400).json({ message: 'Invalid OTP' });
+        }
+
+        const user = await User.findOne({ email });
+
         // Log login activity
         const loginActivity = new Activity({
             user: user._id,
@@ -117,26 +171,20 @@ router.post('/signin', async (req, res) => {
         });
         await loginActivity.save();
 
-        // --- ADDED JWT GENERATION ON SIGNIN ---
-        // <-- 2. Create the payload for the token
         const payload = {
             user: {
-                id: user.id // Use the MongoDB document ID
+                id: user.id
             }
         };
-        
-        console.log('Sign in successful, creating token for user:', email);
-        
-        // <-- 3. Sign the token with your secret key
+
         jwt.sign(
             payload,
-            process.env.JWT_SECRET,   // Your secret key from .env file
-            { expiresIn: '5h' },      // Token expires in 5 hours
+            process.env.JWT_SECRET,
+            { expiresIn: '5h' },
             (err, token) => {
                 if (err) throw err;
-                // <-- 4. Send the token and user info back to the client
-                res.json({ 
-                    message: 'Sign in successful', 
+                res.json({
+                    message: 'Sign in successful',
                     token,
                     user: {
                         id: user.id,
@@ -148,13 +196,16 @@ router.post('/signin', async (req, res) => {
                 });
             }
         );
-        // --- END OF JWT GENERATION ---
-        
+
+        // Delete the used OTP
+        await Otp.deleteOne({ _id: otpDoc._id });
+
     } catch (err) {
-        console.error('Signin error:', err);
+        console.error('OTP verification error:', err);
         res.status(500).json({ message: 'Server error' });
     }
 });
+
 
 // Google Sign-In
 router.post('/google-signin', async (req, res) => {
@@ -176,58 +227,45 @@ router.post('/google-signin', async (req, res) => {
             await user.save();
         }
 
-        // Log login activity
-        const loginActivity = new Activity({
-            user: user._id,
-            activityType: 'login',
-            description: 'User logged in via Google.',
+        // --- OTP Generation and Sending ---
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        
+        const newOtp = new Otp({
+            email: user.email,
+            otp: otp
         });
-        await loginActivity.save();
+        await newOtp.save();
 
-        // Create JWT payload
-        const payload = {
-            user: {
-                id: user.id,
-            },
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: user.email,
+            subject: 'Your OTP for Sign In',
+            text: `Your OTP is: ${otp}`
         };
 
-        // Sign the token
-        jwt.sign(
-            payload,
-            process.env.JWT_SECRET,
-            { expiresIn: '5h' },
-            (err, token) => {
-                if (err) throw err;
-                res.json({
-                    message: 'Sign in successful',
-                    token,
-                    user: {
-                        id: user.id,
-                        email: user.email,
-                        firstName: user.firstName,
-                        lastName: user.lastName,
-                        username: user.username,
-                    },
-                });
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.log(error);
+                return res.status(500).json({ message: 'Error sending OTP email' });
             }
-        );
+            console.log('Email sent: ' + info.response);
+            res.status(200).json({ message: 'OTP sent to your email', email: user.email });
+        });
+
     } catch (err) {
         console.error('Google Sign-in error:', err);
         res.status(500).json({ message: 'Server error' });
     }
 });
 
-// GitHub OAuth
-router.get('/github', (req, res) => {
-  const url = `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}&scope=user:email`;
-  res.redirect(url);
-});
-
+// GitHub OAuth Callback
 router.get('/github/callback', async (req, res) => {
   const { code } = req.query;
+  console.log('GitHub callback initiated. Code:', code);
 
   try {
     // Exchange code for access token
+    console.log('Attempting to exchange code for access token...');
     const tokenResponse = await axios.post('https://github.com/login/oauth/access_token', {
       client_id: process.env.GITHUB_CLIENT_ID,
       client_secret: process.env.GITHUB_CLIENT_SECRET,
@@ -237,21 +275,29 @@ router.get('/github/callback', async (req, res) => {
         'Accept': 'application/json'
       }
     });
+    console.log('Token exchange response:', tokenResponse.data);
 
     const { access_token } = tokenResponse.data;
+    if (!access_token) {
+      console.error('No access token received from GitHub.');
+      return res.redirect(`http://localhost:5173/signin?error=github_token_failed`);
+    }
 
     // Fetch user info from GitHub
+    console.log('Fetching user info from GitHub...');
     const userResponse = await axios.get('https://api.github.com/user', {
       headers: {
         'Authorization': `token ${access_token}`
       }
     });
+    console.log('GitHub user info:', userResponse.data);
 
     const githubUser = userResponse.data;
     let email = githubUser.email;
 
     // If email is null, fetch from the primary email endpoint
     if (!email) {
+      console.log('Email not found in user info, fetching from user/emails endpoint...');
       const emailsResponse = await axios.get('https://api.github.com/user/emails', {
         headers: {
           'Authorization': `token ${access_token}`
@@ -260,49 +306,63 @@ router.get('/github/callback', async (req, res) => {
       const primaryEmail = emailsResponse.data.find(e => e.primary && e.verified);
       if (primaryEmail) {
         email = primaryEmail.email;
+        console.log('Primary email found:', email);
       }
     }
 
     if (!email) {
-      return res.status(400).send("Could not retrieve a verified email from GitHub.");
+      console.error("Could not retrieve a verified email from GitHub.");
+      return res.redirect(`http://localhost:5173/signin?error=github_email_missing`);
     }
 
     let user = await User.findOne({ email });
 
     if (!user) {
+      console.log('User not found, creating new user...');
       user = new User({
         email,
         firstName: githubUser.name || githubUser.login,
         lastName: '',
         githubId: githubUser.id,
-        password: Math.random().toString(36).slice(-8),
+        password: Math.random().toString(36).slice(-8), // Consider a more secure way to handle password for OAuth users
       });
       await user.save();
+      console.log('New user created:', user.email);
+    } else {
+      console.log('Existing user found:', user.email);
     }
 
-    // Log login activity
-    const loginActivity = new Activity({
-        user: user._id,
-        activityType: 'login',
-        description: 'User logged in via GitHub.',
+    // --- OTP Generation and Sending ---
+    console.log('Generating and sending OTP...');
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    
+    const newOtp = new Otp({
+        email: user.email,
+        otp: otp
     });
-    await loginActivity.save();
+    await newOtp.save();
+    console.log('OTP saved to DB.');
 
-    // Create JWT
-    const payload = {
-      user: {
-        id: user.id,
-      },
+    const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: user.email,
+        subject: 'Your OTP for Sign In',
+        text: `Your OTP is: ${otp}`
     };
 
-    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '5h' });
-
-    // Redirect to frontend with token
-    res.redirect(`http://localhost:5173/auth/callback?token=${token}`);
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.error('Error sending OTP email:', error);
+            return res.redirect(`http://localhost:5173/signin?error=otp_send_failed`);
+        }
+        console.log('Email sent: ' + info.response);
+        console.log('Attempting to redirect to verify-otp page...');
+        res.redirect(`http://localhost:5174/verify-otp?email=${user.email}`);
+    });
 
   } catch (err) {
-    console.error('GitHub OAuth error:', err);
-    res.status(500).json({ message: 'Server error' });
+    console.error('GitHub OAuth error caught in catch block:', err);
+    res.redirect(`http://localhost:5174/signin?error=github_oauth_failed&message=${encodeURIComponent(err.message)}`);
   }
 });
 
