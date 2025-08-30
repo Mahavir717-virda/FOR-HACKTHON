@@ -14,7 +14,7 @@ const Avatar = styled.div`
   border-radius: 50%;
   background-color: #a0d2eb;
   display: flex;
-  justify-content: center;
+  justify-content: center;  
   align-items: center;
   margin-right: 10px;
 `;

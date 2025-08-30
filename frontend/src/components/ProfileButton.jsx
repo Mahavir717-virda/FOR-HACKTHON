@@ -49,7 +49,19 @@ const UsernameText = styled.span`
   white-space: nowrap;
 `;
 
-const ProfileButton = ({ username, avatarUrl }) => {
+const DropdownHeader = styled.div`
+  padding: 12px 16px;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+`;
+
+const EmailText = styled.span`
+  font-size: 0.875rem;
+  color: #6b7280;
+`;
+
+const ProfileButton = ({ user }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -57,10 +69,13 @@ const ProfileButton = ({ username, avatarUrl }) => {
   };
 
   return (
-              <DropdownHeader>
-            <UsernameText>{user?.firstName || 'Guest'}</UsernameText>
-            <EmailText>{user?.email}</EmailText>
-          </DropdownHeader>
+    <ProfileButtonContainer onClick={handleClick}>
+      {user?.avatarUrl ? <Avatar src={user.avatarUrl} alt="Avatar" /> : <DefaultAvatar><FaUserCircle /></DefaultAvatar>}
+      <DropdownHeader>
+        <UsernameText>{user?.firstName || 'Guest'}</UsernameText>
+        <EmailText>{user?.email}</EmailText>
+      </DropdownHeader>
+    </ProfileButtonContainer>
   );
 };
 
