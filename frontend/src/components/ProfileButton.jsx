@@ -57,16 +57,10 @@ const ProfileButton = ({ username, avatarUrl }) => {
   };
 
   return (
-    <ProfileButtonContainer onClick={handleClick}>
-      {avatarUrl ? (
-        <Avatar src={avatarUrl} alt="User Avatar" />
-      ) : (
-        <DefaultAvatar>
-          <FaUserCircle />
-        </DefaultAvatar>
-      )}
-      <UsernameText>{username || "Guest"}</UsernameText>
-    </ProfileButtonContainer>
+              <DropdownHeader>
+            <UsernameText>{user?.firstName || 'Guest'}</UsernameText>
+            <EmailText>{user?.email}</EmailText>
+          </DropdownHeader>
   );
 };
 

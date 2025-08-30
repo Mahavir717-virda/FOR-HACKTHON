@@ -110,6 +110,37 @@ router.post('/signin', async (req, res) => {
             return res.status(400).json({ message: 'Invalid email or password' });
         }
 
+        // --- TEST USER --- 
+        if (email === 'test@example.com') {
+            const payload = {
+                user: {
+                    id: user.id
+                }
+            };
+
+            jwt.sign(
+                payload,
+                process.env.JWT_SECRET,
+                { expiresIn: '1h' },
+                (err, token) => {
+                    if (err) throw err;
+                    res.json({ 
+                        message: 'Sign in successful', 
+                        token,
+                        user: {
+                            id: user.id,
+                            email: user.email,
+                            firstName: user.firstName,
+                            lastName: user.lastName,
+                            username: user.username
+                        }
+                    });
+                }
+            );
+            return;
+        }
+        // --- END OF TEST USER ---
+
         // --- OTP Generation and Sending ---
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         
