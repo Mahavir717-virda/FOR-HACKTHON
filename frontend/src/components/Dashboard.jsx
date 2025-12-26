@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { FaUserCircle, FaSignOutAlt, FaBell, FaSun, FaMoon, FaRobot } from 'react-icons/fa';
 import { useTheme } from '../utils/useTheme';
+import Snowfall from "react-snowfall";
 
 const TechTonicHackathon = ({ user, onLogout }) => {
     const navigate = useNavigate();
@@ -1509,6 +1510,9 @@ const TechTonicHackathon = ({ user, onLogout }) => {
 
     return (
         <>
+
+      <Snowfall snowflakeCount={500} />
+  
             <style>{styles}</style>
 
             <div className="floating-particles">
